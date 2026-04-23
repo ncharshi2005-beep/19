@@ -1,0 +1,95 @@
+# Experiment 19: Jenkins and Docker Integration
+
+## Objective
+- The objective of this lab is to automate the creation of a Docker image through a Jenkins pipeline.
+- This bridges the gap between application code and containerized deployment.
+
+---
+
+## 1. Prerequisites
+
+- Jenkins Plugins:
+  - Docker Plugin
+  - Docker Pipeline Plugin
+- System Access:
+  - Jenkins must have permission to run Docker commands
+  - On Windows, Docker Desktop must be running
+- Project Files:
+  - A GitHub repository containing:
+    - Application code (e.g., `app.py`)
+    - A valid `Dockerfile`
+
+---
+
+## 2. Lab Tasks
+
+### Step 1: Create a New Pipeline Job
+
+- Open Jenkins dashboard
+- Click **"New Item"**
+- Enter name: `Lab-19-Docker-Integration`
+- Select **Pipeline**
+- Under **Pipeline section**:
+  - Choose **"Pipeline script from SCM"**
+  - Add your Git repository URL
+
+---
+
+### Step 2: Create the Jenkinsfile
+
+- Add a file named `Jenkinsfile` in your project root
+
+#### Jenkinsfile (Windows Example)
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Pulls code from Git repository
+                checkout scm
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                // Build Docker image using Dockerfile
+                bat 'docker build -t my-jenkins-app:%BUILD_NUMBER% .'
+            }
+        }
+
+        stage('Docker Verify') {
+            steps {
+                // List Docker images to verify build
+                bat 'docker images'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Docker image built and verified successfully!'
+        }
+    }
+}
+
+
+
+
+
+Step 3: Run the Build
+Click "Build Now" in Jenkins
+Open Console Output
+Observe:
+Code checkout from Git
+Docker image build process
+Execution of Dockerfile instructions
+3. Key Outcomes
+Automated Packaging
+Each code push triggers a new Docker image build
+Version Control
+%BUILD_NUMBER% ensures each image has a unique tag
+CI/CD Foundation
+Forms the Build and Package stages of a CI/CD pipeline
